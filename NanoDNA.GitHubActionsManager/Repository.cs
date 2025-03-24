@@ -1,5 +1,4 @@
-﻿using NanoDNA.DockerManager;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -51,9 +50,9 @@ namespace NanoDNA.GitHubActionsManager
         [JsonExtensionData]
         public Dictionary<string, JToken> ExtraData { get; set; }
 
-        public static Repository GetRepo(string owner, string repository, string githubPAT)
+        public static Repository GetRepo(string owner, string repository)
         {
-            using (HttpResponseMessage response = GetClient(githubPAT).GetAsync($"https://api.github.com/repos/{owner}/{repository}").Result)
+            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{owner}/{repository}").Result)
             {
                 if (!response.IsSuccessStatusCode)
                     return null;
@@ -64,12 +63,12 @@ namespace NanoDNA.GitHubActionsManager
             }
         }
 
-        public string GetToken(string githubPAT)
+        public string GetToken()
         {
             JObject tokenResponse;
             string tokenRegisterURL = $"{URL}/actions/runners/registration-token";
 
-            using (HttpResponseMessage response = GetClient(githubPAT).PostAsync(tokenRegisterURL, null).Result)
+            using (HttpResponseMessage response = Client.PostAsync(tokenRegisterURL, null).Result)
             {
                 if (!response.IsSuccessStatusCode)
                 {
@@ -114,17 +113,18 @@ namespace NanoDNA.GitHubActionsManager
         //    return runner;
         //}
 
-        public Runner[] GetRunners(string githubPAT)
+        public Runner[] GetRunners()
         {
-            using (HttpResponseMessage response = GetClient(githubPAT).GetAsync($"{URL}/actions/runners").Result)
+            using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/runners").Result)
             {
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Failed to get Runners");
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
-                JObject payload = JObject.Parse(responseBody);
+                Console.WriteLine(responseBody);
 
+                JObject payload = JObject.Parse(responseBody);
                 JToken runners = payload["runners"];
 
                 return JsonConvert.DeserializeObject<Runner[]>(runners.ToString());

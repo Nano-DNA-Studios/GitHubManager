@@ -25,10 +25,14 @@ namespace NanoDNA.GitHubActionsManager
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        internal RunnerLabel(string name)
+        /// <summary>
+        /// Initializes a new instance of a Runner Label
+        /// </summary>
+        /// <param name="name">Name of the Label</param>
+        public RunnerLabel(string name)
         {
             ID = 0;
-            Name = Name;
+            Name = name;
             Type = string.Empty;
         }
     }

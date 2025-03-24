@@ -13,26 +13,6 @@ namespace NanoDNA.GitHubActionsManager
     /// </summary>
     public class Runner : GitHubAPIClient
     {
-        public DockerContainer Container { get; private set; }
-
-        public string OwnerName { get; private set; }
-
-        public string RepositoryName { get; private set; }
-
-        internal Runner(string name, string owner, string repository, string[] labels)
-        {
-            Name = name;
-            OwnerName = owner;
-            RepositoryName = repository;
-
-            List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
-
-            foreach (string label in labels)
-                runnerLabels.Add(new RunnerLabel(label));
-
-            Labels = runnerLabels.ToArray();
-        }
-
         /// <summary>
         /// ID of the Runner Instance
         /// </summary>
@@ -69,61 +49,108 @@ namespace NanoDNA.GitHubActionsManager
         [JsonProperty("labels")]
         public RunnerLabel[] Labels { get; set; }
 
-        public void Start(string githubPAT)
+        /// <summary>
+        /// Docker Container Controlling the Runner Instance
+        /// </summary>
+        public DockerContainer Container { get; private set; }
+
+        /// <summary>
+        /// Repository Owner's Name
+        /// </summary>
+        public string OwnerName { get; private set; }
+
+        /// <summary>
+        /// Repository Name
+        /// </summary>
+        public string RepositoryName { get; private set; }
+
+        /// <summary>
+        /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
+        /// </summary>
+        /// <param name="name">Name of the Runner</param>
+        /// <param name="ownerName">Name of the Repositories Owner</param>
+        /// <param name="repositoryName">Name of the Repository</param>
+        /// <param name="labels">Labels to add to the Runner</param>
+        internal Runner(string name, string ownerName, string repositoryName, string[] labels)
+        {
+            Name = name;
+            OwnerName = ownerName;
+            RepositoryName = repositoryName;
+
+            List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
+
+            foreach (string label in labels)
+                runnerLabels.Add(new RunnerLabel(label));
+
+            Labels = runnerLabels.ToArray();
+        }
+
+        /// <summary>
+        /// Intializes a new Empty Runner Instance, used for JSON Deserialization
+        /// </summary>
+        protected Runner() { }
+
+        /// <summary>
+        /// Starts a Runner in a Docker Container
+        /// </summary>
+        public void Start()
         {
             Container = new DockerContainer(Name.ToLower(), "mrdnalex/github-action-worker-container");
 
-            Console.WriteLine($"Labels : {GetRegistrationLabels()}");
-
             Container.AddEnvironmentVariable("REPO", GetHTMLRepoLink(OwnerName, RepositoryName));
-            Container.AddEnvironmentVariable("TOKEN", GetToken(githubPAT));
+            Container.AddEnvironmentVariable("TOKEN", GetToken());
             Container.AddEnvironmentVariable("RUNNERGROUP", "");
             Container.AddEnvironmentVariable("RUNNERNAME", Name);
-            Container.AddEnvironmentVariable("RUNNERLABELS", "self-hosted,gitapiexperiment");
+            Container.AddEnvironmentVariable("RUNNERLABELS", $"\"{GetRegistrationLabels()}\"");
             Container.AddEnvironmentVariable("RUNNERWORKDIR", "WorkDir");
-
-            foreach (KeyValuePair<string, string> env in Container.EnvironmentVariables)
-            {
-                Console.WriteLine($"{env.Key} : {env.Value}");
-            }
 
             Container.Start();
 
-            WaitForRegistered(githubPAT);
-
-            Console.WriteLine($"Is Alive : {IsAlive(githubPAT)}");
+            WaitForRegistered();
+            UpdateRunnerInfo();
         }
-       
-        private void WaitForRegistered (string githubPAT)
+
+        /// <summary>
+        /// Waits on the GitHub Action Runner to be Registered and Visible on the GitHub API
+        /// </summary>
+        private void WaitForRegistered()
         {
             int count = 0;
 
-            while (!IsAlive(githubPAT) && count < 50)
+            while (!Registered() && count < 50)
             {
                 Thread.Sleep(100);
                 count++;
             }
-
-            Console.WriteLine($"Wait Count : {count}");
         }
 
-        private void WaitForUnregistered(string githubPAT)
+        /// <summary>
+        /// Waits on the Runner to be Unregistered and Removed on the GitHub API
+        /// </summary>
+        private void WaitForUnregistered()
         {
             int count = 0;
 
-            while (IsAlive(githubPAT) && count < 50)
+            while (Registered() && count < 50)
             {
                 Thread.Sleep(100);
                 count++;
             }
+        }
 
-            Console.WriteLine($"Wait Count : {count}");
+        /// <summary>
+        /// Checks if the Runner Container is Running
+        /// </summary>
+        /// <returns>True if the Container is Running, False otherwise</returns>
+        public bool Running()
+        {
+            return Container.Running();
         }
 
         //Split into 2 Versions (Registered for On GitHub API, Running for Container is alive)
-        public bool IsAlive(string githubPAT)
+        public bool Registered()
         {
-            using (HttpResponseMessage response = GetClient(githubPAT).GetAsync($"https://api.github.com/repos/{OwnerName}/{RepositoryName}/actions/runners?name={Name}").Result)
+            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{OwnerName}/{RepositoryName}/actions/runners?name={Name}").Result)
             {
                 if (!response.IsSuccessStatusCode)
                 {
@@ -139,39 +166,47 @@ namespace NanoDNA.GitHubActionsManager
             }
         }
 
+        /// <summary>
+        /// Gets the Labels that will be added to the Runner in String Format
+        /// </summary>
+        /// <returns>Labels to add in Appropriate String Format</returns>
         private string GetRegistrationLabels()
         {
             string labels = "";
 
-            Console.WriteLine($"Labels Length : {Labels.Length}");
-
-            foreach (RunnerLabel label in Labels)
+            for (int i = 0; i < Labels.Length; i++)
             {
-                Console.WriteLine(label.Name);
-                labels += label.Name + ",";
+                labels += Labels[i].Name;
+
+                if (i < Labels.Length - 1)
+                    labels += ",";
             }
 
-            return labels.TrimEnd(',');
+            return labels;
         }
 
-        public void Stop(string githubPAT)
+        /// <summary>
+        /// Stops the Runner
+        /// </summary>
+        public void Stop()
         {
             Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
 
-            WaitForUnregistered(githubPAT);
+            WaitForUnregistered();
 
             Container.Stop();
-
-            Console.WriteLine(Container.GetLogs());
             Container.Remove();
         }
 
-        public string GetToken(string githubPAT)
+        /// <summary>
+        /// Gets the Registration Token to Register the Runner with the GitHub API
+        /// </summary>
+        /// <returns>The Registration Token</returns>
+        private string GetToken()
         {
-            JObject tokenResponse;
             string tokenRegisterURL = $"{GetRepoLink(OwnerName, RepositoryName)}/actions/runners/registration-token";
 
-            using (HttpResponseMessage response = GetClient(githubPAT).PostAsync(tokenRegisterURL, null).Result)
+            using (HttpResponseMessage response = Client.PostAsync(tokenRegisterURL, null).Result)
             {
                 if (!response.IsSuccessStatusCode)
                 {
@@ -181,39 +216,54 @@ namespace NanoDNA.GitHubActionsManager
                     return String.Empty;
                 }
 
-                tokenResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                return JObject.Parse(response.Content.ReadAsStringAsync().Result)["token"].ToString();
             }
-
-            return tokenResponse["token"].ToString();
-
         }
 
-        //public Runner StartGitHubActionsRunner(string githubPAT)
-        //{
-        //    DockerContainer container = new DockerContainer("gitapiexperiments", "mrdnalex/github-action-worker-container");
-        //
-        //    container.AddEnvironmentVariable("REPO", HtmlURL);
-        //    container.AddEnvironmentVariable("TOKEN", GetToken(githubPAT));
-        //    container.AddEnvironmentVariable("RUNNERGROUP", "");
-        //    container.AddEnvironmentVariable("RUNNERNAME", "GitHubAPIExperiments");
-        //    container.AddEnvironmentVariable("RUNNERLABELS", "self-hosted,gitapiexperiment");
-        //    container.AddEnvironmentVariable("RUNNERWORKDIR", "WorkDir");
-        //
-        //    container.Start();
-        //
-        //    Runner[] runners = GetRunners(githubPAT);
-        //
-        //    if (runners.Length == 0)
-        //        throw new Exception("No Runners Found");
-        //
-        //    Console.WriteLine("Displaying Payload");
-        //    Console.WriteLine(JsonConvert.SerializeObject(runners, Formatting.Indented));
-        //
-        //    Runner runner = runners[0];
-        //
-        //    runner.Container = container;
-        //
-        //    return runner;
-        //}
+        /// <summary>
+        /// Updates the Runner Information using the Instanciated Runner from the GitHub API
+        /// </summary>
+        private void UpdateRunnerInfo()
+        {
+            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{OwnerName}/{RepositoryName}/actions/runners?name={Name}").Result)
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Failed to get Runner Status");
+                    Console.ResetColor();
+                    return;
+                }
+
+                JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                Name = runnerResponse["runners"][0]["name"].ToString();
+                ID = (long)runnerResponse["runners"][0]["id"];
+                OS = runnerResponse["runners"][0]["os"].ToString();
+                Status = runnerResponse["runners"][0]["status"].ToString();
+                Busy = (bool)runnerResponse["runners"][0]["busy"];
+                Labels = JsonConvert.DeserializeObject<RunnerLabel[]>(runnerResponse["runners"][0]["labels"].ToString());
+            }
+        }
+
+        public static Runner[] GetRunners(string ownerName, string repositoryName)
+        {
+            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}/actions/runners").Result)
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Failed to get Runner Status");
+                    Console.ResetColor();
+                    return null;
+                }
+
+                JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                Console.WriteLine(runnerResponse.ToString());
+
+                return JsonConvert.DeserializeObject<Runner[]>(runnerResponse["runners"].ToString());
+            }
+        }
     }
 }

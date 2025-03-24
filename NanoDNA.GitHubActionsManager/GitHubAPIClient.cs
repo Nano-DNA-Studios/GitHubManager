@@ -1,32 +1,40 @@
-﻿using System.Net.Http;
+﻿using System.Diagnostics;
+using System.Net.Http;
 
 namespace NanoDNA.GitHubActionsManager
 {
+    /// <summary>
+    /// Base Class for GitHub API Communication
+    /// </summary>
     public class GitHubAPIClient
     {
-        public static HttpClient GetClient(string githubPAT)
+        /// <summary>
+        /// GitHub Personal Access Token for API Communication
+        /// </summary>
+        private static string GitHubPAT { get; set; }
+
+        private static HttpClient _client;
+
+        protected static HttpClient Client => _client;
+
+        public static void SetGitHubPAT (string githubPAT)
         {
-            HttpClient client = new HttpClient();
+            GitHubPAT = githubPAT;
 
-            client.DefaultRequestHeaders.Add("Authorization", $"token {githubPAT}");
-            client.DefaultRequestHeaders.Add("User-Agent", "CSharp-App");
-            client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-
-            return client;
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("Authorization", $"token {GitHubPAT}");
+            _client.DefaultRequestHeaders.Add("User-Agent", "CSharp-App");
+            _client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
         }
 
-        public static string GetRepoLink (string ownerName, string repositoryName)
+        protected static string GetRepoLink (string ownerName, string repositoryName)
         {
             return $"https://api.github.com/repos/{ownerName}/{repositoryName}";
-
         }
 
-        public static string GetHTMLRepoLink(string ownerName, string repositoryName)
+        protected static string GetHTMLRepoLink(string ownerName, string repositoryName)
         {
             return $"https://github.com/{ownerName}/{repositoryName}";
-
         }
-
-
     }
 }

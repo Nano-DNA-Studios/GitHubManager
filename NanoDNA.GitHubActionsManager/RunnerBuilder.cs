@@ -18,6 +18,12 @@ namespace NanoDNA.GitHubActionsManager
             Labels = new List<string>();
         }
 
+        /// <summary>
+        /// Initializes a new Runner Builder Instance with a predifined List of Labels
+        /// </summary>
+        /// <param name="name">Name of the Runner</param>
+        /// <param name="repository">Repository the Runner will be Registered to</param>
+        /// <param name="labels"></param>
         public RunnerBuilder(string name, Repository repository, List<string> labels)
         {
             Name = name;
@@ -25,44 +31,26 @@ namespace NanoDNA.GitHubActionsManager
             Labels = labels;
         }
 
+        /// <summary>
+        /// Adds a Label to the List of Labels for the Runner
+        /// </summary>
+        /// <param name="label">Label added to the Runner</param>
+        /// <exception cref="ArgumentException">Thrown if the Label already Exists in the List</exception>
         public void AddLabel(string label)
         {
-            //Check for spaces and duplicates
-
-            Console.WriteLine($"Adding Label: {label}");
+            if (Labels.Contains(label))
+                throw new ArgumentException("Label already exists");
 
             Labels.Add(label);
         }
 
-        //private string GetToken(string githubPAT)
-        //{
-        //    JObject tokenResponse;
-        //    string tokenRegisterURL = $"{Repository.URL}/actions/runners/registration-token";
-        //
-        //    using (HttpResponseMessage response = GetClient(githubPAT).PostAsync(tokenRegisterURL, null).Result)
-        //    {
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            Console.ForegroundColor = ConsoleColor.Red;
-        //            Console.WriteLine("Failed to get Token");
-        //            Console.ResetColor();
-        //            return String.Empty;
-        //        }
-        //
-        //        tokenResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-        //    }
-        //
-        //    return tokenResponse["token"].ToString();
-        //}
-
+        /// <summary>
+        /// Builds the Runner and returns the Instance
+        /// </summary>
+        /// <returns>Initialized Runner Instance</returns>
         public Runner Build()
         {
             return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray());
         }
-
-
-
-
-
     }
 }
