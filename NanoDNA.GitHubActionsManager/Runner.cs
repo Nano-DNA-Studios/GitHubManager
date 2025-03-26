@@ -246,6 +246,12 @@ namespace NanoDNA.GitHubActionsManager
             }
         }
 
+        /// <summary>
+        /// Gets all the Runners 
+        /// </summary>
+        /// <param name="ownerName"></param>
+        /// <param name="repositoryName"></param>
+        /// <returns></returns>
         public static Runner[] GetRunners(string ownerName, string repositoryName)
         {
             using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}/actions/runners").Result)

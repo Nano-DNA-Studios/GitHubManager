@@ -50,9 +50,15 @@ namespace NanoDNA.GitHubActionsManager
         [JsonExtensionData]
         public Dictionary<string, JToken> ExtraData { get; set; }
 
-        public static Repository GetRepo(string owner, string repository)
+        /// <summary>
+        /// Gets a Repositories Information from the GitHub API using the Owner and Repository Name
+        /// </summary>
+        /// <param name="ownerName">Name of the Owner of the Repository</param>
+        /// <param name="repositoryName">Name of the Repository</param>
+        /// <returns>New Initialized instance of a Repository</returns>
+        public static Repository GetRepo(string ownerName, string repositoryName)
         {
-            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{owner}/{repository}").Result)
+            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}").Result)
             {
                 if (!response.IsSuccessStatusCode)
                     return null;
@@ -63,56 +69,11 @@ namespace NanoDNA.GitHubActionsManager
             }
         }
 
-        public string GetToken()
-        {
-            JObject tokenResponse;
-            string tokenRegisterURL = $"{URL}/actions/runners/registration-token";
-
-            using (HttpResponseMessage response = Client.PostAsync(tokenRegisterURL, null).Result)
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Failed to get Token");
-                    Console.ResetColor();
-                    return String.Empty;
-                }
-
-                tokenResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-            }
-
-            return tokenResponse["token"].ToString();
-
-        }
-
-        //public Runner StartGitHubActionsRunner(string githubPAT)
-        //{
-        //    DockerContainer container = new DockerContainer("gitapiexperiments", "mrdnalex/github-action-worker-container");
-        //
-        //    container.AddEnvironmentVariable("REPO", HtmlURL);
-        //    container.AddEnvironmentVariable("TOKEN", GetToken(githubPAT));
-        //    container.AddEnvironmentVariable("RUNNERGROUP", "");
-        //    container.AddEnvironmentVariable("RUNNERNAME", "GitHubAPIExperiments");
-        //    container.AddEnvironmentVariable("RUNNERLABELS", "self-hosted,gitapiexperiment");
-        //    container.AddEnvironmentVariable("RUNNERWORKDIR", "WorkDir");
-        //
-        //    container.Start();
-        //
-        //    Runner[] runners = GetRunners(githubPAT);
-        //
-        //    if (runners.Length == 0)
-        //        throw new Exception("No Runners Found");
-        //
-        //    Console.WriteLine("Displaying Payload");
-        //    Console.WriteLine(JsonConvert.SerializeObject(runners, Formatting.Indented));
-        //
-        //    Runner runner = runners[0];
-        //
-        //    runner.Container = container;
-        //
-        //    return runner;
-        //}
-
+        /// <summary>
+        /// Gets all Runners Belonging to the Repository 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Runner[] GetRunners()
         {
             using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/runners").Result)
