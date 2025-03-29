@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using NanoDNA.GitHubManager.Interfaces;
 
-namespace NanoDNA.GitHubManager.Events
+namespace NanoDNA.GitHubManager.Services
 {
     /// <summary>
     /// Dispatches GitHub Events to the Appropriate Handlers

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net.Http;
+﻿using System.Net.Http;
 
 namespace NanoDNA.GitHubManager
 {
@@ -26,7 +25,7 @@ namespace NanoDNA.GitHubManager
         /// <summary>
         /// Sets the GitHub Personal Access Token for API Communication
         /// </summary>
-        /// <param name="githubPAT"></param>
+        /// <param name="githubPAT">GitHub Personal Access Token for API Communication</param>
         public static void SetGitHubPAT (string githubPAT)
         {
             GitHubPAT = githubPAT;
@@ -51,8 +50,8 @@ namespace NanoDNA.GitHubManager
         /// <summary>
         /// Gets the HTML Link to the Repository using the Owner Name and Repository Name
         /// </summary>
-        /// <param name="ownerName"></param>
-        /// <param name="repositoryName"></param>
+        /// <param name="ownerName">Name of the Owner of the Repository</param>
+        /// <param name="repositoryName">Name of the Repository</param>
         /// <returns>HTML URL to the Repository Requested</returns>
         protected static string GetHTMLRepoLink(string ownerName, string repositoryName)
         {

@@ -1,38 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using NanoDNA.GitHubManager.Models;
 
 namespace NanoDNA.GitHubManager
 {
+    /// <summary>
+    /// Helps configure and create new GitHub self-hosted runner instances tied to a specific repository
+    /// </summary>
     public class RunnerBuilder : GitHubAPIClient
     {
+        /// <summary>
+        /// Repository the Runner will be Registered to
+        /// </summary>
         public Repository Repository { get; private set; }
 
+        /// <summary>
+        /// Name of the Runner
+        /// </summary>
         public string Name { get; private set; }
 
+        /// <summary>
+        /// Labels the Runner will be Registered with
+        /// </summary>
         public List<string> Labels { get; private set; }
 
-        public bool Ephermal { get; private set; }
+        /// <summary>
+        /// Toggle for the Runner to be Ephemeral
+        /// </summary>
+        public bool Ephemeral { get; private set; }
 
+        /// <summary>
+        /// Initializes a new Empty Instance of a <see cref="RunnerBuilder"/>
+        /// </summary>
+        /// <param name="name">Name of the Runner</param>
+        /// <param name="repository">Repository the Runner is Registered to</param>
+        /// <param name="ephemeral">Toggle for the Runner to be Ephemeral</param>
         public RunnerBuilder(string name, Repository repository, bool ephemeral)
         {
             Name = name;
             Repository = repository;
             Labels = new List<string>();
-            Ephermal = ephemeral;
+            Ephemeral = ephemeral;
         }
 
         /// <summary>
-        /// Initializes a new Runner Builder Instance with a predifined List of Labels
+        /// Initializes a new Instance of <see cref="RunnerBuilder"/> with a predifined List of Labels
         /// </summary>
         /// <param name="name">Name of the Runner</param>
         /// <param name="repository">Repository the Runner will be Registered to</param>
-        /// <param name="labels"></param>
+        /// <param name="ephemeral">Toggle for the Runner to be Ephemeral</param>
+        /// <param name="labels">List of Labels to Give to the Runner</param>
         public RunnerBuilder(string name, Repository repository, bool ephemeral, List<string> labels)
         {
             Name = name;
             Repository = repository;
             Labels = labels;
-            Ephermal = ephemeral;
+            Ephemeral = ephemeral;
         }
 
         /// <summary>
@@ -54,7 +77,7 @@ namespace NanoDNA.GitHubManager
         /// <returns>Initialized Runner Instance</returns>
         public Runner Build()
         {
-            return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray(), Ephermal);
+            return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray(), Ephemeral);
         }
     }
 }

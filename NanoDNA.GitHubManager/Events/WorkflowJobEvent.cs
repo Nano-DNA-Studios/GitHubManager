@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using NanoDNA.GitHubManager.Interfaces;
+using NanoDNA.GitHubManager.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 

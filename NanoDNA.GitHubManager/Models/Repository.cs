@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 
-namespace NanoDNA.GitHubManager
+namespace NanoDNA.GitHubManager.Models
 {
     /// <summary>
     /// Describes a GitHub Repository's Information
@@ -127,7 +127,7 @@ namespace NanoDNA.GitHubManager
             }
         }
 
-        public void GetWorkflowJobs ()
+        public void GetWorkflowJobs()
         {
             using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/jobs").Result)
             {

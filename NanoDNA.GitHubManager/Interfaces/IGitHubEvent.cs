@@ -1,5 +1,4 @@
-﻿
-namespace NanoDNA.GitHubManager.Events
+﻿namespace NanoDNA.GitHubManager.Interfaces
 {
     /// <summary>
     /// Interface for GitHub Events

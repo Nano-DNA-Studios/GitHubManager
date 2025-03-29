@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using NanoDNA.GitHubManager.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace NanoDNA.GitHubManager.Events
+namespace NanoDNA.GitHubManager.Services
 {
     /// <summary>
     /// Basic Webhook Receiver for GitHub Events.
@@ -58,8 +59,8 @@ namespace NanoDNA.GitHubManager.Events
                 if (!GitHubSignature.Verify(json, signature, _secret))
                     return Results.Unauthorized();
 
-                IGitHubEvent? githubEvent = GitHubEventParser.Parse(json, eventName);
-                
+                IGitHubEvent githubEvent = GitHubEventParser.Parse(json, eventName);
+
                 if (githubEvent != null)
                     _dispatcher.Dispatch(githubEvent);
 

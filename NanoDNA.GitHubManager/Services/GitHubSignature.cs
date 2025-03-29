@@ -2,7 +2,7 @@
 using System.Text;
 using System;
 
-namespace NanoDNA.GitHubManager.Events
+namespace NanoDNA.GitHubManager.Services
 {
     /// <summary>
     /// Encapsulates the logic to verify the GitHub signature.

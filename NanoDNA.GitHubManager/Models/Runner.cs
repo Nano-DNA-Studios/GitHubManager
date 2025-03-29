@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 
-namespace NanoDNA.GitHubManager
+namespace NanoDNA.GitHubManager.Models
 {
     /// <summary>
     /// Describes a GitHub Runner Instances Information
@@ -69,7 +69,12 @@ namespace NanoDNA.GitHubManager
         /// </summary>
         public bool Ephemeral { get; private set; }
 
+        /// <summary>
+        /// Timer Responsible for Syncing the Runner with the GitHub API, Used for Ephemeral Runners
+        /// </summary>
         private Timer _timer;
+
+        public event Action<Runner> StopRunner;
 
         /// <summary>
         /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
@@ -124,7 +129,7 @@ namespace NanoDNA.GitHubManager
         /// <summary>
         /// Syncs the Ephemeral Runner to the GitHub API and Stops the Runner if it is not Busy
         /// </summary>
-        private void EphemeralSync ()
+        private void EphemeralSync()
         {
             SyncInfo();
 
@@ -212,7 +217,7 @@ namespace NanoDNA.GitHubManager
 
                 JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                return (long)(runnerResponse["total_count"]) == 1;
+                return (long)runnerResponse["total_count"] == 1;
             }
         }
 
@@ -240,6 +245,8 @@ namespace NanoDNA.GitHubManager
         /// </summary>
         public void Stop()
         {
+            StopRunner?.Invoke(this);
+
             if (Ephemeral && _timer != null)
                 _timer.Dispose();
 
@@ -269,7 +276,7 @@ namespace NanoDNA.GitHubManager
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Failed to get Token");
                     Console.ResetColor();
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return JObject.Parse(response.Content.ReadAsStringAsync().Result)["token"].ToString();
@@ -293,7 +300,7 @@ namespace NanoDNA.GitHubManager
 
                 JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                if ((long)(runnerResponse["total_count"]) == 0)
+                if ((long)runnerResponse["total_count"] == 0)
                     return;
 
                 Name = runnerResponse["runners"][0]["name"].ToString();

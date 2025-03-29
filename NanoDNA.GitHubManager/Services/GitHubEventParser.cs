@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using NanoDNA.GitHubManager.Events;
+using NanoDNA.GitHubManager.Interfaces;
+using Newtonsoft.Json;
 using System;
 
-namespace NanoDNA.GitHubManager.Events
+namespace NanoDNA.GitHubManager.Services
 {
     /// <summary>
     /// Parses GitHub Webhook JSON Payloads into the Appropriate Event
@@ -14,10 +16,9 @@ namespace NanoDNA.GitHubManager.Events
         /// <param name="json">JSON Payload from GitHub</param>
         /// <param name="eventName">Name of the GitHub Event</param>
         /// <returns>Event instance as a <see cref="IGitHubEvent"/></returns>
-        public static IGitHubEvent? Parse(string json, string eventName)
+        public static IGitHubEvent Parse(string json, string eventName)
         {
             Console.WriteLine(eventName);
-            //Console.WriteLine(json);
 
             return eventName switch
             {

@@ -1,4 +1,6 @@
-﻿namespace NanoDNA.GitHubManager.Events
+﻿using NanoDNA.GitHubManager.Interfaces;
+
+namespace NanoDNA.GitHubManager.Events
 {
     internal class PushEvent : IGitHubEvent
     {

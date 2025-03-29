@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace NanoDNA.GitHubManager
+namespace NanoDNA.GitHubManager.Models
 {
     /// <summary>
     /// Owner Information from the Webhook Payload
