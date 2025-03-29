@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NanoDNA.GitHubActionsManager", "NanoDNA.GitHubActionsManager\NanoDNA.GitHubActionsManager.csproj", "{4A916A1F-66D2-4C62-8D1B-D99108C89D03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NanoDNA.GitHubManager", "NanoDNA.GitHubManager\NanoDNA.GitHubManager.csproj", "{4A916A1F-66D2-4C62-8D1B-D99108C89D03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 
-namespace NanoDNA.GitHubActionsManager
+namespace NanoDNA.GitHubManager
 {
     /// <summary>
     /// Describes a GitHub Runner Instances Information
@@ -65,13 +65,20 @@ namespace NanoDNA.GitHubActionsManager
         public string RepositoryName { get; private set; }
 
         /// <summary>
+        /// Toggle indicating if the Runner is Ephemeral
+        /// </summary>
+        public bool Ephemeral { get; private set; }
+
+        private Timer _timer;
+
+        /// <summary>
         /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
         /// </summary>
         /// <param name="name">Name of the Runner</param>
         /// <param name="ownerName">Name of the Repositories Owner</param>
         /// <param name="repositoryName">Name of the Repository</param>
         /// <param name="labels">Labels to add to the Runner</param>
-        internal Runner(string name, string ownerName, string repositoryName, string[] labels)
+        internal Runner(string name, string ownerName, string repositoryName, string[] labels, bool ephemeral)
         {
             Name = name;
             OwnerName = ownerName;
@@ -83,6 +90,7 @@ namespace NanoDNA.GitHubActionsManager
                 runnerLabels.Add(new RunnerLabel(label));
 
             Labels = runnerLabels.ToArray();
+            Ephemeral = ephemeral;
         }
 
         /// <summary>
@@ -95,7 +103,7 @@ namespace NanoDNA.GitHubActionsManager
         /// </summary>
         public void Start()
         {
-            Container = new DockerContainer(Name.ToLower(), "mrdnalex/github-action-worker-container");
+            Container = new DockerContainer(Name.ToLower(), "mrdnalex/github-action-worker-container-dotnet");
 
             Container.AddEnvironmentVariable("REPO", GetHTMLRepoLink(OwnerName, RepositoryName));
             Container.AddEnvironmentVariable("TOKEN", GetToken());
@@ -107,7 +115,45 @@ namespace NanoDNA.GitHubActionsManager
             Container.Start();
 
             WaitForRegistered();
-            UpdateRunnerInfo();
+            SyncInfo();
+
+            if (Ephemeral)
+                _timer = new Timer((e) => EphemeralSync(), null, 5000, 5000);
+        }
+
+        /// <summary>
+        /// Syncs the Ephemeral Runner to the GitHub API and Stops the Runner if it is not Busy
+        /// </summary>
+        private void EphemeralSync ()
+        {
+            SyncInfo();
+
+            if (!Busy)
+                Stop();
+        }
+
+        public void WaitForBusy()
+        {
+            int count = 0;
+
+            while (!Busy && count < 50)
+            {
+                Thread.Sleep(100);
+                SyncInfo();
+                count++;
+            }
+        }
+
+        public void WaitForIdle()
+        {
+            int count = 0;
+
+            while (Busy && count < 50)
+            {
+                Thread.Sleep(100);
+                SyncInfo();
+                count++;
+            }
         }
 
         /// <summary>
@@ -147,7 +193,10 @@ namespace NanoDNA.GitHubActionsManager
             return Container.Running();
         }
 
-        //Split into 2 Versions (Registered for On GitHub API, Running for Container is alive)
+        /// <summary>
+        /// Checks if the Runner is Registered on the GitHub API
+        /// </summary>
+        /// <returns>True if the Runner is Registered and Ready in the GitHub API, False otherwise</returns>
         public bool Registered()
         {
             using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{OwnerName}/{RepositoryName}/actions/runners?name={Name}").Result)
@@ -190,12 +239,18 @@ namespace NanoDNA.GitHubActionsManager
         /// </summary>
         public void Stop()
         {
+            if (Ephemeral && _timer != null)
+                _timer.Dispose();
+
             Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
 
             WaitForUnregistered();
 
-            Container.Stop();
-            Container.Remove();
+            if (Container.Running())
+                Container.Stop();
+
+            if (Container.Running())
+                Container.Remove();
         }
 
         /// <summary>
@@ -221,9 +276,9 @@ namespace NanoDNA.GitHubActionsManager
         }
 
         /// <summary>
-        /// Updates the Runner Information using the Instanciated Runner from the GitHub API
+        /// Syncs the Runners Information with the GitHub API
         /// </summary>
-        private void UpdateRunnerInfo()
+        public void SyncInfo()
         {
             using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{OwnerName}/{RepositoryName}/actions/runners?name={Name}").Result)
             {
@@ -236,6 +291,9 @@ namespace NanoDNA.GitHubActionsManager
                 }
 
                 JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                if ((long)(runnerResponse["total_count"]) == 0)
+                    return;
 
                 Name = runnerResponse["runners"][0]["name"].ToString();
                 ID = (long)runnerResponse["runners"][0]["id"];

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NanoDNA.GitHubActionsManager
+namespace NanoDNA.GitHubManager
 {
     /// <summary>
     /// Describes a GitHub Runner Label

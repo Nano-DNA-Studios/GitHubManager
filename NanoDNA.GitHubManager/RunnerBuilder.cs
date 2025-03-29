@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NanoDNA.GitHubActionsManager
+namespace NanoDNA.GitHubManager
 {
     public class RunnerBuilder : GitHubAPIClient
     {
@@ -11,11 +11,14 @@ namespace NanoDNA.GitHubActionsManager
 
         public List<string> Labels { get; private set; }
 
-        public RunnerBuilder(string name, Repository repository)
+        public bool Ephermal { get; private set; }
+
+        public RunnerBuilder(string name, Repository repository, bool ephemeral)
         {
             Name = name;
             Repository = repository;
             Labels = new List<string>();
+            Ephermal = ephemeral;
         }
 
         /// <summary>
@@ -24,11 +27,12 @@ namespace NanoDNA.GitHubActionsManager
         /// <param name="name">Name of the Runner</param>
         /// <param name="repository">Repository the Runner will be Registered to</param>
         /// <param name="labels"></param>
-        public RunnerBuilder(string name, Repository repository, List<string> labels)
+        public RunnerBuilder(string name, Repository repository, bool ephemeral, List<string> labels)
         {
             Name = name;
             Repository = repository;
             Labels = labels;
+            Ephermal = ephemeral;
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace NanoDNA.GitHubActionsManager
         /// <returns>Initialized Runner Instance</returns>
         public Runner Build()
         {
-            return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray());
+            return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray(), Ephermal);
         }
     }
 }

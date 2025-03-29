@@ -2,12 +2,22 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 
-namespace NanoDNA.GitHubActionsManager
+namespace NanoDNA.GitHubManager
 {
+    /// <summary>
+    /// Describes a GitHub Repository's Information
+    /// </summary>
     public class Repository : GitHubAPIClient
     {
+        /// <summary>
+        /// ID of the Repository, Unique to Each Repository
+        /// </summary>
+        [JsonProperty("id")]
+        public long ID { get; set; }
+
         /// <summary>
         /// Full Name of the Repository (Owner/RepoName)
         /// </summary>
@@ -45,6 +55,12 @@ namespace NanoDNA.GitHubActionsManager
         public string URL { get; set; }
 
         /// <summary>
+        /// Toggle for the Repository being Private or Public
+        /// </summary>
+        [JsonProperty("private")]
+        public bool Private { get; set; }
+
+        /// <summary>
         /// Extra Data Associated with the Repository
         /// </summary>
         [JsonExtensionData]
@@ -61,7 +77,7 @@ namespace NanoDNA.GitHubActionsManager
             using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}").Result)
             {
                 if (!response.IsSuccessStatusCode)
-                    return null;
+                    throw new Exception("Failed to get Repository");
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
@@ -89,6 +105,44 @@ namespace NanoDNA.GitHubActionsManager
                 JToken runners = payload["runners"];
 
                 return JsonConvert.DeserializeObject<Runner[]>(runners.ToString());
+            }
+        }
+
+        public WorkflowRun[] GetWorkflows()
+        {
+            using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/runs").Result)
+            {
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Failed to get Runners");
+
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                JObject payload = JObject.Parse(responseBody);
+
+                File.WriteAllText(@"C:\Users\MrDNA\Downloads\GitHubActionWorker\workflows.json", payload.ToString());
+
+                JToken workflowRuns = payload["workflow_runs"];
+
+                return JsonConvert.DeserializeObject<WorkflowRun[]>(workflowRuns.ToString());
+            }
+        }
+
+        public void GetWorkflowJobs ()
+        {
+            using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/jobs").Result)
+            {
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Failed to get Runners");
+
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                //Console.WriteLine(responseBody);
+
+                JObject payload = JObject.Parse(responseBody);
+
+                Console.WriteLine(payload.ToString());
+
+                // return JsonConvert.DeserializeObject<Runner[]>(runners.ToString());
             }
         }
     }
