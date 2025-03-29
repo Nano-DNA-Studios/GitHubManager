@@ -37,8 +37,7 @@ namespace NanoDNA.GitHubManager.Services
         /// </summary>
         /// <typeparam name="T">Type of Event to Subscribe to</typeparam>
         /// <param name="handler">Function / Handler to run on Event</param>
-        public void On<T>(Action<T> handler) where T : IGitHubEvent
-            => _dispatcher.On(handler);
+        public void On<T>(Action<T> handler) where T : IGitHubEvent => _dispatcher.On(handler);
 
         /// <summary>
         /// Starts a Webhook Receiver for GitHub Events.

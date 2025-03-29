@@ -15,7 +15,7 @@ namespace NanoDNA.GitHubManager
         /// <summary>
         /// Single Instance of the HttpClient for API Communication
         /// </summary>
-        private static HttpClient _client;
+        private static HttpClient _client { get; set; }
 
         /// <summary>
         /// HttpClient for API Communication
@@ -26,7 +26,7 @@ namespace NanoDNA.GitHubManager
         /// Sets the GitHub Personal Access Token for API Communication
         /// </summary>
         /// <param name="githubPAT">GitHub Personal Access Token for API Communication</param>
-        public static void SetGitHubPAT (string githubPAT)
+        public static void SetGitHubPAT(string githubPAT)
         {
             GitHubPAT = githubPAT;
 
@@ -42,7 +42,7 @@ namespace NanoDNA.GitHubManager
         /// <param name="ownerName">Name of the Owner of the Repository</param>
         /// <param name="repositoryName">Name of the Repository</param>
         /// <returns>API URL to the Repository Requested</returns>
-        protected static string GetRepoLink (string ownerName, string repositoryName)
+        protected static string GetRepoLink(string ownerName, string repositoryName)
         {
             return $"https://api.github.com/repos/{ownerName}/{repositoryName}";
         }
