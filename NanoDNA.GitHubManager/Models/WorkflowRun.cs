@@ -125,6 +125,9 @@ namespace NanoDNA.GitHubManager.Models
 
                 JObject keyValuePairs = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
+                if (keyValuePairs == null)
+                    return null;
+
                 WorkflowJob[] jobs = JsonConvert.DeserializeObject<WorkflowJob[]>(keyValuePairs["jobs"].ToString());
 
                 return jobs;
