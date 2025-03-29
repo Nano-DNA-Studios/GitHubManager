@@ -79,6 +79,8 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public event Action<Runner> StopRunner;
 
+        private int idleCount = 0;
+
         /// <summary>
         /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
         /// </summary>
@@ -138,6 +140,11 @@ namespace NanoDNA.GitHubManager.Models
             SyncInfo();
 
             if (!Busy && Status == "online")
+                idleCount++;
+            else
+                idleCount = 0;
+
+            if (idleCount > 3)
                 Stop();
         }
 
@@ -272,7 +279,7 @@ namespace NanoDNA.GitHubManager.Models
         /// <summary>
         /// Unregisters the Runner from the GitHub API
         /// </summary>
-        public void Unregister ()
+        public void Unregister()
         {
             if (Registered())
                 Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
