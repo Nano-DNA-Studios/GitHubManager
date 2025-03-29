@@ -45,8 +45,9 @@ namespace NanoDNA.GitHubManager
         {
             Name = name;
             Repository = repository;
-            Labels = new List<string>();
             Ephemeral = ephemeral;
+            Image = image;
+            Labels = new List<string>();
         }
 
         /// <summary>
@@ -63,6 +64,7 @@ namespace NanoDNA.GitHubManager
             Repository = repository;
             Labels = labels;
             Ephemeral = ephemeral;
+            Image = image;
         }
 
         /// <summary>
