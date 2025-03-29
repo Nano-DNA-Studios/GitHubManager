@@ -98,12 +98,12 @@ namespace NanoDNA.GitHubManager.Models
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
-                Console.WriteLine(responseBody);
-
                 JObject payload = JObject.Parse(responseBody);
-                JToken runners = payload["runners"];
 
-                return JsonConvert.DeserializeObject<Runner[]>(runners.ToString());
+                if ((long)payload["total_count"] == 0)
+                    return null;
+
+                return JsonConvert.DeserializeObject<Runner[]>(payload["runners"].ToString());
             }
         }
 
