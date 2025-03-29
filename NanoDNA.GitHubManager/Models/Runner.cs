@@ -83,14 +83,17 @@ namespace NanoDNA.GitHubManager.Models
         /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
         /// </summary>
         /// <param name="name">Name of the Runner</param>
+        /// <param name="image">Docker Image the Runner will Spin Up from</param>
         /// <param name="ownerName">Name of the Repositories Owner</param>
         /// <param name="repositoryName">Name of the Repository</param>
         /// <param name="labels">Labels to add to the Runner</param>
-        internal Runner(string name, string ownerName, string repositoryName, string[] labels, bool ephemeral)
+        internal Runner(string name, string image, string ownerName, string repositoryName, string[] labels, bool ephemeral)
         {
             Name = name;
             OwnerName = ownerName;
             RepositoryName = repositoryName;
+            Ephemeral = ephemeral;
+            Container = new DockerContainer(Name.ToLower(), image);
 
             List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
 
@@ -98,7 +101,6 @@ namespace NanoDNA.GitHubManager.Models
                 runnerLabels.Add(new RunnerLabel(label));
 
             Labels = runnerLabels.ToArray();
-            Ephemeral = ephemeral;
         }
 
         /// <summary>
@@ -111,8 +113,6 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public void Start()
         {
-            Container = new DockerContainer(Name.ToLower(), "mrdnalex/github-action-worker-container-dotnet");
-
             Container.AddEnvironmentVariable("REPO", GetHTMLRepoLink(OwnerName, RepositoryName));
             Container.AddEnvironmentVariable("TOKEN", GetToken());
             Container.AddEnvironmentVariable("RUNNERGROUP", "");

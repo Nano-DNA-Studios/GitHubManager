@@ -30,12 +30,18 @@ namespace NanoDNA.GitHubManager
         public bool Ephemeral { get; private set; }
 
         /// <summary>
+        /// Docker Image the Runner will Spin Up from
+        /// </summary>
+        public string Image { get; private set; }
+
+        /// <summary>
         /// Initializes a new Empty Instance of a <see cref="RunnerBuilder"/>
         /// </summary>
         /// <param name="name">Name of the Runner</param>
+        /// <param name="image">Docker Image the Runner will Spin Up from</param>
         /// <param name="repository">Repository the Runner is Registered to</param>
         /// <param name="ephemeral">Toggle for the Runner to be Ephemeral</param>
-        public RunnerBuilder(string name, Repository repository, bool ephemeral)
+        public RunnerBuilder(string name, string image, Repository repository, bool ephemeral)
         {
             Name = name;
             Repository = repository;
@@ -47,10 +53,11 @@ namespace NanoDNA.GitHubManager
         /// Initializes a new Instance of <see cref="RunnerBuilder"/> with a predifined List of Labels
         /// </summary>
         /// <param name="name">Name of the Runner</param>
+        /// <param name="image">Docker Image the Runner will Spin Up from</param>
         /// <param name="repository">Repository the Runner will be Registered to</param>
         /// <param name="ephemeral">Toggle for the Runner to be Ephemeral</param>
         /// <param name="labels">List of Labels to Give to the Runner</param>
-        public RunnerBuilder(string name, Repository repository, bool ephemeral, List<string> labels)
+        public RunnerBuilder(string name, string image, Repository repository, bool ephemeral, List<string> labels)
         {
             Name = name;
             Repository = repository;
@@ -77,7 +84,7 @@ namespace NanoDNA.GitHubManager
         /// <returns>Initialized Runner Instance</returns>
         public Runner Build()
         {
-            return new Runner(Name, Repository.Owner.Login, Repository.Name, Labels.ToArray(), Ephemeral);
+            return new Runner(Name, Image, Repository.Owner.Login, Repository.Name, Labels.ToArray(), Ephemeral);
         }
     }
 }
