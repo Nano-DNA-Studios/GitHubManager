@@ -132,6 +132,7 @@ namespace NanoDNA.GitHubManager
                 Stop();
         }
 
+        ///
         public void WaitForBusy()
         {
             int count = 0;
