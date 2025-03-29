@@ -123,9 +123,6 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public void GetJobs()
         {
-            Console.WriteLine("Getting Jobs");
-            Console.WriteLine(JobsURL);
-
             using (HttpResponseMessage response = Client.GetAsync(JobsURL).Result)
             {
                 Console.WriteLine(response.StatusCode);
@@ -138,13 +135,10 @@ namespace NanoDNA.GitHubManager.Models
                     return;
                 }
 
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+                JObject keyValuePairs = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                Directory.CreateDirectory("Logs");
-
-                File.WriteAllBytes(@$"Logs\GitHubLogs-{ID}.zip", response.Content.ReadAsByteArrayAsync().Result);
+                Console.WriteLine(keyValuePairs.ToString());
             }
         }
-
     }
 }
