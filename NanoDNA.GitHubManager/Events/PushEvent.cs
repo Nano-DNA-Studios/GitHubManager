@@ -2,8 +2,12 @@
 
 namespace NanoDNA.GitHubManager.Events
 {
-    internal class PushEvent : IGitHubEvent
+    /// <summary>
+    /// Represents a new Push Event on GitHub
+    /// </summary>
+    public class PushEvent : IGitHubEvent
     {
+        /// <inheritdoc/>
         public string EventType => "push";
     }
 }

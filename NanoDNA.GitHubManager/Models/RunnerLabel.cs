@@ -14,7 +14,7 @@ namespace NanoDNA.GitHubManager.Models
         public long ID { get; set; }
 
         /// <summary>
-        /// Name of the Label
+        /// Name / Value of the Label
         /// </summary>
         [JsonProperty("name")]
         public string Name { get; set; }

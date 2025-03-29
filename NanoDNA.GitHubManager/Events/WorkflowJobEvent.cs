@@ -11,9 +11,7 @@ namespace NanoDNA.GitHubManager.Events
     /// </summary>
     public class WorkflowJobEvent : IGitHubEvent
     {
-        /// <summary>
-        /// Event Type sent by GitHub
-        /// </summary>
+        /// <inheritdoc/>
         public string EventType => "workflow_job";
 
         /// <summary>
@@ -22,9 +20,8 @@ namespace NanoDNA.GitHubManager.Events
         [JsonProperty("workflow_job")]
         public WorkflowRun Workflow { get; }
 
-
         /// <summary>
-        /// Extra Data Associated with the Repository
+        /// Extra Data Associated with the Workflow Job Event
         /// </summary>
         [JsonExtensionData]
         public Dictionary<string, JToken> ExtraData { get; set; }

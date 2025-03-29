@@ -2,8 +2,12 @@
 
 namespace NanoDNA.GitHubManager.Events
 {
-    internal class CheckRunEvent : IGitHubEvent
+    /// <summary>
+    /// Represents a new Check Run Event on GitHub
+    /// </summary>
+    public class CheckRunEvent : IGitHubEvent
     {
+        /// <inheritdoc/>
         public string EventType => "check_run";
     }
 }

@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 
 namespace NanoDNA.GitHubManager.Models
@@ -93,7 +92,7 @@ namespace NanoDNA.GitHubManager.Models
         /// <summary>
         /// Gets the Workflows Jobs Logs Files
         /// </summary>
-        public void GetLogs()
+        public byte[] GetLogs()
         {
             using (HttpResponseMessage response = Client.GetAsync(LogsURL).Result)
             {
@@ -102,12 +101,10 @@ namespace NanoDNA.GitHubManager.Models
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Failed to get Logs");
                     Console.ResetColor();
-                    return;
+                    return null;
                 }
 
-                Directory.CreateDirectory("Logs");
-
-                File.WriteAllBytes(@$"Logs\GitHubLogs-{ID}.zip", response.Content.ReadAsByteArrayAsync().Result);
+                return response.Content.ReadAsByteArrayAsync().Result;
             }
         }
 

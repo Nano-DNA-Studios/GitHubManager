@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 
 namespace NanoDNA.GitHubManager.Models
@@ -88,8 +87,8 @@ namespace NanoDNA.GitHubManager.Models
         /// <summary>
         /// Gets all Runners Belonging to the Repository 
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
+        /// <returns>Array of Runners belonging to the Repository</returns>
+        /// <exception cref="Exception">Thrown if the HttpResponse failed</exception>
         public Runner[] GetRunners()
         {
             using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/runners").Result)
@@ -108,41 +107,26 @@ namespace NanoDNA.GitHubManager.Models
             }
         }
 
+        /// <summary>
+        /// Gets all Workflows Belonging to the Repository
+        /// </summary>
+        /// <returns>Array of the Workflow Runs</returns>
+        /// <exception cref="Exception">Thrown if the HttpResponse failed</exception>
         public WorkflowRun[] GetWorkflows()
         {
             using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/runs").Result)
             {
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception("Failed to get Runners");
+                    throw new Exception($"Failed to get Workflows : {response.Content.ReadAsStringAsync()}");
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
                 JObject payload = JObject.Parse(responseBody);
 
-                File.WriteAllText(@"C:\Users\MrDNA\Downloads\GitHubActionWorker\workflows.json", payload.ToString());
+                if ((long)payload["total_count"] == 0)
+                    return null;
 
-                JToken workflowRuns = payload["workflow_runs"];
-
-                return JsonConvert.DeserializeObject<WorkflowRun[]>(workflowRuns.ToString());
-            }
-        }
-
-        public void GetWorkflowJobs()
-        {
-            using (HttpResponseMessage response = Client.GetAsync($"{URL}/actions/jobs").Result)
-            {
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Failed to get Runners");
-
-                string responseBody = response.Content.ReadAsStringAsync().Result;
-
-                //Console.WriteLine(responseBody);
-
-                JObject payload = JObject.Parse(responseBody);
-
-                Console.WriteLine(payload.ToString());
-
-                // return JsonConvert.DeserializeObject<Runner[]>(runners.ToString());
+                return JsonConvert.DeserializeObject<WorkflowRun[]>(payload["workflow_runs"].ToString());
             }
         }
     }

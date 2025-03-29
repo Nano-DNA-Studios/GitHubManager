@@ -107,7 +107,7 @@ namespace NanoDNA.GitHubManager.Models
         protected Runner() { }
 
         /// <summary>
-        /// Starts a Runner in a Docker Container
+        /// Starts a new Runner Instance in a Docker Container and Registers it with the GitHub API
         /// </summary>
         public void Start()
         {
@@ -140,7 +140,9 @@ namespace NanoDNA.GitHubManager.Models
                 Stop();
         }
 
-        ///
+        /// <summary>
+        /// Waits for the Runner to have a Busy Status before continuing or until timeout
+        /// </summary>
         public void WaitForBusy()
         {
             int count = 0;
@@ -153,6 +155,9 @@ namespace NanoDNA.GitHubManager.Models
             }
         }
 
+        /// <summary>
+        /// Waits for the Runner to have an Idle Status before continuing or until timeout
+        /// </summary>
         public void WaitForIdle()
         {
             int count = 0;
@@ -244,7 +249,7 @@ namespace NanoDNA.GitHubManager.Models
         }
 
         /// <summary>
-        /// Stops the Runner
+        /// Stops the Runner by Unregistering it from the GitHub API and Stopping the Docker Container
         /// </summary>
         public void Stop()
         {
@@ -253,8 +258,7 @@ namespace NanoDNA.GitHubManager.Models
             if (Ephemeral && _timer != null)
                 _timer.Dispose();
 
-            Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
-
+            Unregister();
             WaitForUnregistered();
 
             if (Container.Running())
@@ -262,6 +266,15 @@ namespace NanoDNA.GitHubManager.Models
 
             if (Container.Exists())
                 Container.Remove();
+        }
+
+        /// <summary>
+        /// Unregisters the Runner from the GitHub API
+        /// </summary>
+        public void Unregister ()
+        {
+            if (Registered())
+                Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
         }
 
         /// <summary>
@@ -306,40 +319,12 @@ namespace NanoDNA.GitHubManager.Models
                 if ((long)runnerResponse["total_count"] == 0)
                     return;
 
-                Console.WriteLine(JsonConvert.SerializeObject(runnerResponse, Formatting.Indented));
-
                 Name = runnerResponse["runners"][0]["name"].ToString();
                 ID = (long)runnerResponse["runners"][0]["id"];
                 OS = runnerResponse["runners"][0]["os"].ToString();
                 Status = runnerResponse["runners"][0]["status"].ToString();
                 Busy = (bool)runnerResponse["runners"][0]["busy"];
                 Labels = JsonConvert.DeserializeObject<RunnerLabel[]>(runnerResponse["runners"][0]["labels"].ToString());
-            }
-        }
-
-        /// <summary>
-        /// Gets all the Runners 
-        /// </summary>
-        /// <param name="ownerName"></param>
-        /// <param name="repositoryName"></param>
-        /// <returns></returns>
-        public static Runner[] GetRunners(string ownerName, string repositoryName)
-        {
-            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}/actions/runners").Result)
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Failed to get Runner Status");
-                    Console.ResetColor();
-                    return null;
-                }
-
-                JObject runnerResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-
-                Console.WriteLine(runnerResponse.ToString());
-
-                return JsonConvert.DeserializeObject<Runner[]>(runnerResponse["runners"].ToString());
             }
         }
     }
