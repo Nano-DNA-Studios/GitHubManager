@@ -128,7 +128,7 @@ namespace NanoDNA.GitHubManager
         {
             SyncInfo();
 
-            if (!Busy)
+            if (!Busy && Status == "online")
                 Stop();
         }
 
