@@ -74,6 +74,9 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         private Timer _timer;
 
+        /// <summary>
+        /// Event that is Triggered when the Runner is being Stopped
+        /// </summary>
         public event Action<Runner> StopRunner;
 
         /// <summary>
