@@ -118,7 +118,7 @@ namespace NanoDNA.GitHubManager
             SyncInfo();
 
             if (Ephemeral)
-                _timer = new Timer((e) => EphemeralSync(), null, 10000, 10000);
+                _timer = new Timer((e) => EphemeralSync(), null, 5000, 5000);
         }
 
         /// <summary>
