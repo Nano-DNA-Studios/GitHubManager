@@ -130,8 +130,6 @@ namespace NanoDNA.GitHubManager.Models
 
                 WorkflowJob[] jobs = JsonConvert.DeserializeObject<WorkflowJob[]>(keyValuePairs["jobs"].ToString());
 
-                Console.WriteLine(JsonConvert.SerializeObject(jobs, Formatting.Indented));
-
                 return jobs;
             }
         }

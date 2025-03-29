@@ -306,6 +306,8 @@ namespace NanoDNA.GitHubManager.Models
                 if ((long)runnerResponse["total_count"] == 0)
                     return;
 
+                Console.WriteLine(JsonConvert.SerializeObject(runnerResponse, Formatting.Indented));
+
                 Name = runnerResponse["runners"][0]["name"].ToString();
                 ID = (long)runnerResponse["runners"][0]["id"];
                 OS = runnerResponse["runners"][0]["os"].ToString();
