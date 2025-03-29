@@ -249,7 +249,7 @@ namespace NanoDNA.GitHubManager
             if (Container.Running())
                 Container.Stop();
 
-            if (Container.Running())
+            if (Container.Exists())
                 Container.Remove();
         }
 
