@@ -95,13 +95,8 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public void GetLogs()
         {
-            Console.WriteLine("Getting Logs");
-            Console.WriteLine(LogsURL);
-
             using (HttpResponseMessage response = Client.GetAsync(LogsURL).Result)
             {
-                Console.WriteLine(response.StatusCode);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -109,8 +104,6 @@ namespace NanoDNA.GitHubManager.Models
                     Console.ResetColor();
                     return;
                 }
-
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
 
                 Directory.CreateDirectory("Logs");
 
@@ -121,23 +114,25 @@ namespace NanoDNA.GitHubManager.Models
         /// <summary>
         /// Gets the Jobs Associated with the Workflow Run
         /// </summary>
-        public void GetJobs()
+        public WorkflowJob[] GetJobs()
         {
             using (HttpResponseMessage response = Client.GetAsync(JobsURL).Result)
             {
-                Console.WriteLine(response.StatusCode);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Failed to get Logs");
                     Console.ResetColor();
-                    return;
+                    return null;
                 }
 
                 JObject keyValuePairs = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                Console.WriteLine(keyValuePairs.ToString());
+                WorkflowJob[] jobs = JsonConvert.DeserializeObject<WorkflowJob[]>(keyValuePairs["jobs"].ToString());
+
+                Console.WriteLine(JsonConvert.SerializeObject(jobs, Formatting.Indented));
+
+                return jobs;
             }
         }
     }
