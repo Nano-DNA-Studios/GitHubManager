@@ -1,10 +1,10 @@
-﻿using NanoDNA.DockerManager;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
+using Newtonsoft.Json;
 using System.Threading;
+using Newtonsoft.Json.Linq;
+using NanoDNA.DockerManager;
+using System.Collections.Generic;
 
 namespace NanoDNA.GitHubManager.Models
 {
@@ -17,37 +17,37 @@ namespace NanoDNA.GitHubManager.Models
         /// ID of the Runner Instance
         /// </summary>
         [JsonProperty("id")]
-        public long ID { get; set; }
+        public long ID { get; private set; }
 
         /// <summary>
         /// Name of the Runner Instance
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Operating System of the Runner Instance
         /// </summary>
         [JsonProperty("os")]
-        public string OS { get; set; }
+        public string OS { get; private set; }
 
         /// <summary>
         /// Status of the Runner Instance (online , offline, etc.)
         /// </summary>
         [JsonProperty("status")]
-        public string Status { get; set; }
+        public string Status { get; private set; }
 
         /// <summary>
         /// Flag indicating if the Runner Instance is Busy running a Workflow
         /// </summary>
         [JsonProperty("busy")]
-        public bool Busy { get; set; }
+        public bool Busy { get; private set; }
 
         /// <summary>
         /// Labels assigned to the Runner Instance
         /// </summary>
         [JsonProperty("labels")]
-        public RunnerLabel[] Labels { get; set; }
+        public RunnerLabel[] Labels { get; private set; }
 
         /// <summary>
         /// Docker Container Controlling the Runner Instance
@@ -79,6 +79,9 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public event Action<Runner> StopRunner;
 
+        /// <summary>
+        /// Number of times the Runner is Idle in a Row, used for Ephemeral Runners
+        /// </summary>
         private int idleCount = 0;
 
         /// <summary>
@@ -89,13 +92,13 @@ namespace NanoDNA.GitHubManager.Models
         /// <param name="ownerName">Name of the Repositories Owner</param>
         /// <param name="repositoryName">Name of the Repository</param>
         /// <param name="labels">Labels to add to the Runner</param>
+        /// <param name="ephemeral">Toggle for if the Runner should be Ephemeral and remove itself once Idle for long enough</param>
         internal Runner(string name, string image, string ownerName, string repositoryName, string[] labels, bool ephemeral)
         {
             Name = name;
             OwnerName = ownerName;
             RepositoryName = repositoryName;
             Ephemeral = ephemeral;
-            Console.WriteLine($"Creating Runner {Name} for {OwnerName}/{RepositoryName} using {image}");
             Container = new DockerContainer(Name.ToLower(), image);
 
             List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
@@ -266,8 +269,11 @@ namespace NanoDNA.GitHubManager.Models
             if (Ephemeral && _timer != null)
                 _timer.Dispose();
 
-            Unregister();
-            WaitForUnregistered();
+            if (Registered())
+            {
+                Unregister();
+                WaitForUnregistered();
+            }
 
             if (Container.Running())
                 Container.Stop();

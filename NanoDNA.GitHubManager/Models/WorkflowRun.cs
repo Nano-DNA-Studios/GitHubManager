@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace NanoDNA.GitHubManager.Models
 {
@@ -82,6 +82,18 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         [JsonProperty("display_title")]
         public string DisplayTitle { get; private set; }
+
+        /// <summary>
+        /// Time the Workflow Run was Created
+        /// </summary>
+        [JsonProperty("created_at")]
+        public string CreatedAt { get; private set; }
+
+        /// <summary>
+        /// Time the Workflow Run was Last Updated
+        /// </summary>
+        [JsonProperty("updated_at")]
+        public string UpdatedAt { get; private set; }
 
         /// <summary>
         /// Extra Data Associated with the Repository

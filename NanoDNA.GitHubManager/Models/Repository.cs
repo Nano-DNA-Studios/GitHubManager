@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace NanoDNA.GitHubManager.Models
 {
@@ -15,55 +15,55 @@ namespace NanoDNA.GitHubManager.Models
         /// ID of the Repository, Unique to Each Repository
         /// </summary>
         [JsonProperty("id")]
-        public long ID { get; set; }
+        public long ID { get; private set; }
 
         /// <summary>
         /// Full Name of the Repository (Owner/RepoName)
         /// </summary>
         [JsonProperty("full_name")]
-        public string FullName { get; set; }
+        public string FullName { get; private set; }
 
         /// <summary>
         /// Name of the Repository
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Owner of the Repository
         /// </summary>
         [JsonProperty("owner")]
-        public Owner Owner { get; set; }
+        public Owner Owner { get; private set; }
 
         /// <summary>
         /// Languages the Repository is Written in
         /// </summary>
         [JsonProperty("language")]
-        public string Language { get; set; }
+        public string Language { get; private set; }
 
         /// <summary>
         /// HTML URL to the Repository
         /// </summary>
         [JsonProperty("html_url")]
-        public string HtmlURL { get; set; }
+        public string HtmlURL { get; private set; }
 
         /// <summary>
         /// API URL to the Repository
         /// </summary>
         [JsonProperty("url")]
-        public string URL { get; set; }
+        public string URL { get; private set; }
 
         /// <summary>
         /// Toggle for the Repository being Private or Public
         /// </summary>
         [JsonProperty("private")]
-        public bool Private { get; set; }
+        public bool Private { get; private set; }
 
         /// <summary>
         /// Extra Data Associated with the Repository
         /// </summary>
         [JsonExtensionData]
-        public Dictionary<string, JToken> ExtraData { get; set; }
+        public Dictionary<string, JToken> ExtraData { get; private set; }
 
         /// <summary>
         /// Gets a Repositories Information from the GitHub API using the Owner and Repository Name
@@ -71,7 +71,7 @@ namespace NanoDNA.GitHubManager.Models
         /// <param name="ownerName">Name of the Owner of the Repository</param>
         /// <param name="repositoryName">Name of the Repository</param>
         /// <returns>New Initialized instance of a Repository</returns>
-        public static Repository GetRepo(string ownerName, string repositoryName)
+        public static Repository GetRepository(string ownerName, string repositoryName)
         {
             using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}").Result)
             {
