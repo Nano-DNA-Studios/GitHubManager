@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using NanoDNA.GitHubManager.Interfaces;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
+using NanoDNA.GitHubManager.Interfaces;
 
 namespace NanoDNA.GitHubManager.Services
 {
