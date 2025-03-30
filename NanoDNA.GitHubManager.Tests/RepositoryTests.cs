@@ -1,4 +1,5 @@
 ﻿using NanoDNA.GitHubManager.Models;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -78,28 +79,39 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void GetRunnersTest ()
         {
-            Repository repo = Repository.GetRepository(OwnerName, RepoName);
-            RunnerBuilder builder = new RunnerBuilder("RunnerTest", DefaultImage, repo, false);
-            Runner runner1 = builder.Build();
-
-            runner1.Start();
-
-            Runner[] runners = repo.GetRunners();
-
-            Assert.IsNotNull(runners);
-            Assert.That(runners.Length, Is.GreaterThan(0), "No Runners Found");
-            Assert.That(runners.Single(r => r.Name == runner1.Name), Is.InstanceOf<Runner>());
-
-            foreach (Runner runner in runners)
+            try
             {
-                Assert.IsNotNull(runner);
-                Assert.IsNotNull(runner.Name);
-                Assert.IsNotNull(runner.OS);
-                Assert.IsNotNull(runner.Status);
-                Assert.IsNotNull(runner.Busy);
+                Repository repo = Repository.GetRepository(OwnerName, RepoName);
+                RunnerBuilder builder = new RunnerBuilder("RunnerTest", DefaultImage, repo, false);
+                Runner runner1 = builder.Build();
+
+                Console.WriteLine(JsonConvert.SerializeObject(runner1.Container, Formatting.Indented));
+
+                runner1.Start();
+
+                Runner[] runners = repo.GetRunners();
+
+                Assert.IsNotNull(runners);
+                Assert.That(runners.Length, Is.GreaterThan(0), "No Runners Found");
+                Assert.That(runners.Single(r => r.Name == runner1.Name), Is.InstanceOf<Runner>());
+
+                foreach (Runner runner in runners)
+                {
+                    Assert.IsNotNull(runner);
+                    Assert.IsNotNull(runner.Name);
+                    Assert.IsNotNull(runner.OS);
+                    Assert.IsNotNull(runner.Status);
+                    Assert.IsNotNull(runner.Busy);
+                }
+
+                runner1.Stop();
+            } catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+
+
             }
 
-            runner1.Stop();
         }
     }
 }
