@@ -1,6 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System;
 using System.Text;
-using System;
+using System.Security.Cryptography;
 
 namespace NanoDNA.GitHubManager.Services
 {
