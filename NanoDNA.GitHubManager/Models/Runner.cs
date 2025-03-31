@@ -256,7 +256,7 @@ namespace NanoDNA.GitHubManager.Models
                     labels += ",";
             }
 
-            return labels;
+            return Labels.Length == 0 ? "" : $"\"{labels}\"";
         }
 
         /// <summary>
