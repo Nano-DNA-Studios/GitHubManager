@@ -123,7 +123,7 @@ namespace NanoDNA.GitHubManager.Models
             Container.AddEnvironmentVariable("TOKEN", GetToken());
             Container.AddEnvironmentVariable("RUNNERGROUP", "");
             Container.AddEnvironmentVariable("RUNNERNAME", Name);
-            Container.AddEnvironmentVariable("RUNNERLABELS", $"\"{GetRegistrationLabels()}\"");
+            Container.AddEnvironmentVariable("RUNNERLABELS", GetRegistrationLabels());
             Container.AddEnvironmentVariable("RUNNERWORKDIR", "WorkDir");
 
             Container.Start();
