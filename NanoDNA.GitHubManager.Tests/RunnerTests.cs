@@ -1,6 +1,7 @@
 ﻿using NanoDNA.GitHubManager.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
 using System.Linq;
 using System.Threading;
 
@@ -86,6 +87,8 @@ namespace NanoDNA.GitHubManager.Tests
             Thread.Sleep(5000);
 
             runner.SyncInfo();
+
+            Console.WriteLine(JsonConvert.SerializeObject(runner, Formatting.Indented));
 
             Assert.IsNotNull(runner);
             Assert.IsNotNull(runner.ID);
@@ -186,7 +189,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
             runner.SyncInfo();
 
