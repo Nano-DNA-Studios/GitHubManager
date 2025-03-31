@@ -82,7 +82,7 @@ namespace NanoDNA.GitHubManager.Tests
         public void GetRunnersTest ()
         {
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
-            RunnerBuilder builder = new RunnerBuilder("RunnerTest", DefaultImage, repo, false);
+            RunnerBuilder builder = new RunnerBuilder("RunnerTest0", DefaultImage, repo, false);
             Runner runner1 = builder.Build();
 
             runner1.Start();
