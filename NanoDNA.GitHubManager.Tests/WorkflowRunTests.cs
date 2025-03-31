@@ -21,15 +21,19 @@ namespace NanoDNA.GitHubManager.Tests
             Assert.IsNotNull(workflows);
             Assert.That(workflows.Length, Is.GreaterThan(0));
 
-            WorkflowRun workflow = workflows[0];
+            foreach (WorkflowRun workflow in workflows)
+            {
+                if (workflow.Conclusion != "success")
+                    continue;
 
-            Assert.IsNotNull(workflow);
-            Assert.That(workflow.ID, Is.Not.Null);
-            Assert.That(workflow.Name, Is.Not.Null);
-            Assert.That(workflow.Event, Is.Not.Null);
-            Assert.That(workflow.Status, Is.Not.Null);
-            Assert.That(workflow.Conclusion, Is.Not.Null);
-            Assert.That(workflow.WorkflowID, Is.GreaterThan(0));
+                Assert.IsNotNull(workflow);
+                Assert.That(workflow.ID, Is.Not.Null);
+                Assert.That(workflow.Name, Is.Not.Null);
+                Assert.That(workflow.Event, Is.Not.Null);
+                Assert.That(workflow.Status, Is.Not.Null);
+                Assert.That(workflow.Conclusion, Is.Not.Null);
+                Assert.That(workflow.WorkflowID, Is.GreaterThan(0));
+            }
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerBuilderTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest1";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -38,7 +38,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerBuilderTestWithLabels()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest2";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -66,7 +66,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerInitializationTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest3";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, true);
@@ -115,7 +115,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void EphemeralRunnerTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest4";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, true);
@@ -174,7 +174,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerRunningAndRegisteredTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest5";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);
@@ -206,7 +206,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void SyncInfoTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest6";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);
@@ -244,7 +244,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void UnregisterTest ()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest7";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);

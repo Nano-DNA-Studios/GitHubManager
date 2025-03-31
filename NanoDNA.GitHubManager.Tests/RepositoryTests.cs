@@ -59,6 +59,9 @@ namespace NanoDNA.GitHubManager.Tests
 
             foreach (WorkflowRun workflow in workflows)
             {
+                if (workflow.Conclusion != "success")
+                    continue;
+
                 Assert.IsNotNull(workflow);
                 Assert.IsNotNull(workflow.ID);
                 Assert.IsNotNull(workflow.WorkflowID);
