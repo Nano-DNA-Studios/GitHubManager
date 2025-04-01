@@ -160,7 +160,7 @@ namespace NanoDNA.GitHubManager.Models
 
             while (!Busy && count < 50)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 SyncInfo();
                 count++;
             }
@@ -175,7 +175,7 @@ namespace NanoDNA.GitHubManager.Models
 
             while (Busy && count < 50)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 SyncInfo();
                 count++;
             }
@@ -190,7 +190,7 @@ namespace NanoDNA.GitHubManager.Models
 
             while (!Registered() && count < 50)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 count++;
             }
         }
@@ -204,7 +204,7 @@ namespace NanoDNA.GitHubManager.Models
 
             while (Registered() && count < 50)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 count++;
             }
         }
