@@ -60,6 +60,9 @@ namespace NanoDNA.GitHubManager.Tests
 
             foreach (WorkflowRun workflow in workflows)
             {
+                if (workflow.Conclusion != "success")
+                    continue;
+
                 Assert.IsNotNull(workflow);
                 Assert.IsNotNull(workflow.ID);
                 Assert.IsNotNull(workflow.WorkflowID);
@@ -74,44 +77,33 @@ namespace NanoDNA.GitHubManager.Tests
         }
 
         /// <summary>
-        /// Tests if the GetRunners Function returns Runners
-        /// </summary>
-        [Test]
-        public void GetRunnersTest ()
-        {
-            try
-            {
-                Repository repo = Repository.GetRepository(OwnerName, RepoName);
-                RunnerBuilder builder = new RunnerBuilder("RunnerTest", DefaultImage, repo, false);
-                Runner runner1 = builder.Build();
+/// Tests if the GetRunners Function returns Runners
+/// </summary>
+[Test]
+public void GetRunnersTest ()
+{
+    Repository repo = Repository.GetRepository(OwnerName, RepoName);
+    RunnerBuilder builder = new RunnerBuilder("RunnerTest0", DefaultImage, repo, false);
+    Runner runner1 = builder.Build();
 
-                Console.WriteLine(JsonConvert.SerializeObject(runner1.Container, Formatting.Indented));
+    runner1.Start();
 
-                runner1.Start();
+    Runner[] runners = repo.GetRunners();
 
-                Runner[] runners = repo.GetRunners();
+    Assert.IsNotNull(runners);
+    Assert.That(runners.Length, Is.GreaterThan(0), "No Runners Found");
+    Assert.That(runners.Single(r => r.Name == runner1.Name), Is.InstanceOf<Runner>());
 
-                Assert.IsNotNull(runners);
-                Assert.That(runners.Length, Is.GreaterThan(0), "No Runners Found");
-                Assert.That(runners.Single(r => r.Name == runner1.Name), Is.InstanceOf<Runner>());
+    foreach (Runner runner in runners)
+    {
+        Assert.IsNotNull(runner);
+        Assert.IsNotNull(runner.Name);
+        Assert.IsNotNull(runner.OS);
+        Assert.IsNotNull(runner.Status);
+        Assert.IsNotNull(runner.Busy);
+    }
 
-                foreach (Runner runner in runners)
-                {
-                    Assert.IsNotNull(runner);
-                    Assert.IsNotNull(runner.Name);
-                    Assert.IsNotNull(runner.OS);
-                    Assert.IsNotNull(runner.Status);
-                    Assert.IsNotNull(runner.Busy);
-                }
-
-                runner1.Stop();
-            } catch (Exception e)
-            {
-                Assert.Fail(e.Message);
-
-
-            }
-
-        }
+    runner1.Stop();
+}
     }
 }

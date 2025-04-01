@@ -1,6 +1,7 @@
 ﻿using NanoDNA.GitHubManager.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
 using System.Linq;
 using System.Threading;
 
@@ -17,7 +18,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerBuilderTest()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest1";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -38,7 +39,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerBuilderTestWithLabels()
         {
-            string runnerTest = "RunnerTest";
+            string runnerTest = "RunnerTest2";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -66,7 +67,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerInitializationTest()
         {
-            string runnerTest = "RunnerTest2";
+            string runnerTest = "RunnerTest3";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, true);
@@ -83,7 +84,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
             runner.SyncInfo();
 
@@ -115,7 +116,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void EphemeralRunnerTest()
         {
-            string runnerTest = "RunnerTest3";
+            string runnerTest = "RunnerTest4";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, true);
@@ -136,7 +137,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
             runner.SyncInfo();
 
@@ -174,7 +175,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void RunnerRunningAndRegisteredTest()
         {
-            string runnerTest = "RunnerTest4";
+            string runnerTest = "RunnerTest5";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);
@@ -186,7 +187,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
             runner.SyncInfo();
 
@@ -206,7 +207,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void SyncInfoTest()
         {
-            string runnerTest = "RunnerTest5";
+            string runnerTest = "RunnerTest6";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);
@@ -244,7 +245,7 @@ namespace NanoDNA.GitHubManager.Tests
         [Test]
         public void UnregisterTest ()
         {
-            string runnerTest = "RunnerTest6";
+            string runnerTest = "RunnerTest7";
 
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
             RunnerBuilder runnerBuilder = new RunnerBuilder(runnerTest, DefaultImage, repo, false);

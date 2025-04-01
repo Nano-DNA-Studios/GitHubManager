@@ -99,7 +99,7 @@ namespace NanoDNA.GitHubManager.Models
             OwnerName = ownerName;
             RepositoryName = repositoryName;
             Ephemeral = ephemeral;
-            Container = new DockerContainer(Name.ToLower(), image);
+            Container = new DockerContainer(Name.ToLower(), image, true);
 
             List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
 
@@ -123,7 +123,7 @@ namespace NanoDNA.GitHubManager.Models
             Container.AddEnvironmentVariable("TOKEN", GetToken());
             Container.AddEnvironmentVariable("RUNNERGROUP", "");
             Container.AddEnvironmentVariable("RUNNERNAME", Name);
-            Container.AddEnvironmentVariable("RUNNERLABELS", $"\"{GetRegistrationLabels()}\"");
+            Container.AddEnvironmentVariable("RUNNERLABELS", GetRegistrationLabels());
             Container.AddEnvironmentVariable("RUNNERWORKDIR", "WorkDir");
 
             Container.Start();
@@ -256,7 +256,7 @@ namespace NanoDNA.GitHubManager.Models
                     labels += ",";
             }
 
-            return labels;
+            return Labels.Length == 0 ? "" : $"\"{labels}\"";
         }
 
         /// <summary>
