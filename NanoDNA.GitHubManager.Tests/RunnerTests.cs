@@ -88,8 +88,6 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.SyncInfo();
 
-            Console.WriteLine(JsonConvert.SerializeObject(runner, Formatting.Indented));
-
             Assert.IsNotNull(runner);
             Assert.IsNotNull(runner.ID);
             Assert.IsNotNull(runner.Name);

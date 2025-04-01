@@ -99,7 +99,7 @@ namespace NanoDNA.GitHubManager.Models
             OwnerName = ownerName;
             RepositoryName = repositoryName;
             Ephemeral = ephemeral;
-            Container = new DockerContainer(Name.ToLower(), image);
+            Container = new DockerContainer(Name.ToLower(), image, true);
 
             List<RunnerLabel> runnerLabels = new List<RunnerLabel>();
 
