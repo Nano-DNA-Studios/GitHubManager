@@ -12,7 +12,7 @@ namespace NanoDNA.GitHubManager.Tests
         /// Tests if Workflow Runs can be Retrieved from a Repository
         /// </summary>
         [Test]
-        public void GetWorkflowRuns ()
+        public void GetWorkflowRuns()
         {
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -40,7 +40,7 @@ namespace NanoDNA.GitHubManager.Tests
         /// Tests if Workflow Run Logs can be extracted from a Successful Workflow Run
         /// </summary>
         [Test]
-        public void GetLogs ()
+        public void GetLogs()
         {
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 
@@ -66,7 +66,7 @@ namespace NanoDNA.GitHubManager.Tests
         /// Tests if a Job can be retrieved from a Successful Workflow Run
         /// </summary>
         [Test]
-        public void GetJobs ()
+        public void GetJobs()
         {
             Repository repo = Repository.GetRepository(OwnerName, RepoName);
 

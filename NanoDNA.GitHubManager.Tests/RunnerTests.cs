@@ -243,7 +243,7 @@ namespace NanoDNA.GitHubManager.Tests
         /// Tests if the Runner can be Unregistered from the GitHub API but still have the Container running
         /// </summary>
         [Test]
-        public void UnregisterTest ()
+        public void UnregisterTest()
         {
             string runnerTest = "RunnerTest7";
 
