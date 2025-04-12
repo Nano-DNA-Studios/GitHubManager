@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<!-- Development Project References -->
-	<ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(RepositoryName)' == 'GitHubAPICLI'">
+	<ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(RepositoryName)' == 'GitHubAPICLI-Solution'">
 		<ProjectReference Include="..\..\NanoDNA.DockerManager\NanoDNA.DockerManager\NanoDNA.DockerManager.csproj" />
 	</ItemGroup>
 
