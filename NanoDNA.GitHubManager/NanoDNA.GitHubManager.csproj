@@ -14,13 +14,22 @@
 		<None Include="..\README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 
-	<!-- Nuget Package References -->
+	<!-- Development Project References -->
+	<ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(RepositoryName)' == 'GitHubAPICLI'">
+		<ProjectReference Include="..\..\NanoDNA.DockerManager\NanoDNA.DockerManager\NanoDNA.DockerManager.csproj" />
+	</ItemGroup>
+
+	<!-- Publishing NuGet Package References -->
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<PackageReference Include="NanoDNA.DockerManager" Version="0.1.1" />
+	</ItemGroup>
+
+	<!-- NuGet Package References -->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
-		<PackageReference Include="NanoDNA.DockerManager" Version="0.1.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
