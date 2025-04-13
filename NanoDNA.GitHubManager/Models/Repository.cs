@@ -129,5 +129,19 @@ namespace NanoDNA.GitHubManager.Models
                 return JsonConvert.DeserializeObject<WorkflowRun[]>(payload["workflow_runs"].ToString());
             }
         }
+
+        /// <summary>
+        /// Removes and Unregisters a Runner from the Repository
+        /// </summary>
+        /// <param name="id">ID of the Runner to remove</param>
+        /// <exception cref="Exception">Thrown if the Status Code returned has failed</exception>
+        public void RemoveRunner (long id)
+        {
+            using (HttpResponseMessage response = Client.DeleteAsync($"{URL}/actions/runners/{id}").Result)
+            {
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Failed to remove Runner : {response.Content.ReadAsStringAsync()}");
+            }
+        }
     }
 }
