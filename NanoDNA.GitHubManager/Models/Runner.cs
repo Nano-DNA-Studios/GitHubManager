@@ -288,7 +288,7 @@ namespace NanoDNA.GitHubManager.Models
         public void Unregister()
         {
             if (Registered())
-                Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
+                Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token $TOKEN");
         }
 
         /// <summary>
