@@ -143,5 +143,23 @@ namespace NanoDNA.GitHubManager.Models
                     throw new Exception($"Failed to remove Runner : {response.Content.ReadAsStringAsync()}");
             }
         }
+
+        /// <summary>
+        /// Tries to Remove a Runner from the Repository
+        /// </summary>
+        /// <param name="id">ID of the Runner to Remove</param>
+        /// <returns>True if the Runner was Removed Successfully or was already Removed, False if an Exception occured</returns>
+        public bool TryRemoveRunner (long id)
+        {
+            try
+            {
+                RemoveRunner(id);
+                return true;
+            } catch (Exception e)
+            {
+                Console.WriteLine($"Failed to remove Runner : {e.Message}");
+                return false;
+            }
+        }
     }
 }
