@@ -90,6 +90,8 @@ namespace NanoDNA.GitHubManager.Tests
 
             Thread.Sleep(5000);
 
+            runner1.SyncInfo();
+
             Runner[] runners = repo.GetRunners();
 
             Assert.IsNotNull(runners);
