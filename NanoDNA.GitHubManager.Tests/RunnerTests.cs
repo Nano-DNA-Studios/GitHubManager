@@ -1,7 +1,6 @@
 ﻿using NanoDNA.GitHubManager.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
 using System.Linq;
 using System.Threading;
 
