@@ -167,6 +167,8 @@ namespace NanoDNA.GitHubManager.Tests
                 runner.Stop();
                 Assert.Fail("Runner did not auto delete");
             }
+
+            runner.Container.Remove(true);
         }
 
         /// <summary>
