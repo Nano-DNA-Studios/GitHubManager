@@ -1,7 +1,6 @@
 ﻿using NanoDNA.GitHubManager.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
 using System.Linq;
 using System.Threading;
 
@@ -84,7 +83,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
 
             runner.SyncInfo();
 
@@ -167,6 +166,9 @@ namespace NanoDNA.GitHubManager.Tests
                 runner.Stop();
                 Assert.Fail("Runner did not auto delete");
             }
+
+            if (runner.Container.Exists())
+                runner.Container.Remove(true);
         }
 
         /// <summary>

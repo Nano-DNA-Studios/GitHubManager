@@ -1,8 +1,8 @@
 ﻿using NanoDNA.GitHubManager.Models;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Threading;
 
 namespace NanoDNA.GitHubManager.Tests
 {
@@ -87,6 +87,10 @@ namespace NanoDNA.GitHubManager.Tests
             Runner runner1 = builder.Build();
 
             runner1.Start();
+
+            Thread.Sleep(5000);
+
+            runner1.SyncInfo();
 
             Runner[] runners = repo.GetRunners();
 
