@@ -287,11 +287,16 @@ namespace NanoDNA.GitHubManager.Models
         /// </summary>
         public void Unregister()
         {
-            if (Registered())
-                Container.Execute($"bash -c \"/home/GitWorker/ActionRunner/config.sh remove --token \\$TOKEN\"");
-
-            if (Registered() && Container.EnvironmentVariables.ContainsKey("TOKEN"))
-                Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
+            try
+            {
+                if (Registered() && Container.EnvironmentVariables.ContainsKey("TOKEN"))
+                    Container.Execute($"/home/GitWorker/ActionRunner/config.sh remove --token {Container.EnvironmentVariables["TOKEN"]}");
+            }
+            catch (Exception e)
+            {
+                if (Registered())
+                    Container.Execute($"bash -c \"/home/GitWorker/ActionRunner/config.sh remove --token $TOKEN\"");
+            }
 
             if (Registered())
                 throw new Exception("Failed to Unregister Runner from GitHub API");
