@@ -40,11 +40,10 @@ namespace NanoDNA.GitHubManager.Services
         public void On<T>(Action<T> handler) where T : IGitHubEvent => _dispatcher.On(handler);
 
         /// <summary>
-        /// Starts a Webhook Receiver for GitHub Events.
+        /// Creates a Basic Webhook Receiver Server Application for GitHub Events.
         /// </summary>
-        /// <param name="port">Port for the Server</param>
-        /// <returns>Async Task hosting the Server</returns>
-        public async Task StartAsync(int port = 5000)
+        /// <returns>New Application Instance</returns>
+        private WebApplication CreateWebhookApp ()
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
             WebApplication app = builder.Build();
@@ -65,6 +64,29 @@ namespace NanoDNA.GitHubManager.Services
 
                 return Results.Ok();
             });
+
+            return app;
+        }
+
+        /// <summary>
+        /// Starts a Webhook Receiver for GitHub Events.
+        /// </summary>
+        /// <param name="port">Port the Webhook Server is Exposed on</param>
+        public void Start(int port = 8080)
+        {
+            WebApplication app = CreateWebhookApp();
+
+            app.Run($"http://0.0.0.0:{port}");
+        }
+
+        /// <summary>
+        /// Starts a Webhook Receiver Asynchronously for GitHub Events 
+        /// </summary>
+        /// <param name="port">Port the Webhook Server is Exposed on</param>
+        /// <returns>Async Task hosting the Server</returns>
+        public async Task StartAsync(int port = 8080)
+        {
+            WebApplication app = CreateWebhookApp();
 
             await app.RunAsync($"http://0.0.0.0:{port}");
         }
