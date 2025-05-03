@@ -21,7 +21,7 @@ namespace NanoDNA.GitHubManager.Tests
         /// <summary>
         /// Name of the Repository
         /// </summary>
-        public const string RepoName = "NanoDNA.GitHubManager";
+        public const string RepoName = "GitHubManager";
 
         /// <summary>
         /// Default Image for the Runner
