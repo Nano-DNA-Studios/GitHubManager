@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
+	<!-- Project Reference Conditionals -->
+	<PropertyGroup>
+		<UseProjectReference Condition="'$(Configuration)' == 'Debug' and '$(RepositoryName)' == 'GitHubAPICLI-Solution'">true</UseProjectReference>
+		<UseProjectReference Condition="'$(Configuration)' == 'Release' or '$(RepositoryName)' == ''">false</UseProjectReference>
+	</PropertyGroup>
+
 	<!-- Building / Publishing Metadata -->
 	<PropertyGroup>
 		<RootNamespace>NanoDNA.GitHubManager</RootNamespace>
@@ -15,8 +21,8 @@
 	</ItemGroup>
 
 	<!-- Development Project References -->
-	<ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(RepositoryName)' == 'GitHubAPICLI-Solution'">
-		<ProjectReference Include="..\..\NanoDNA.DockerManager\NanoDNA.DockerManager\NanoDNA.DockerManager.csproj" />
+	<ItemGroup Condition="'$(UseProjectReference)' == 'true'" >
+		<ProjectReference Include="..\..\DockerManager\DockerManager\DockerManager.csproj" />
 	</ItemGroup>
 
 	<!-- Publishing NuGet Package References -->
