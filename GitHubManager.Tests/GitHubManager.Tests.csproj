@@ -26,7 +26,7 @@
 
 	<!-- Project References -->
 	<ItemGroup>
-		<ProjectReference Include="..\NanoDNA.GitHubManager\NanoDNA.GitHubManager.csproj" />
+		<ProjectReference Include="..\GitHubManager\GitHubManager.csproj" />
 	</ItemGroup>
 
 </Project>
