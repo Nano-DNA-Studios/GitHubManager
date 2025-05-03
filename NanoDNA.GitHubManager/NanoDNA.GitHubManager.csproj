@@ -33,4 +33,11 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
+	<!-- Include Items to Edit -->
+	<ItemGroup>
+		<None Include="..\README.md" />
+		<None Include="..\Directory.Build.props" />
+		<None Include="..\LICENSE" />
+	</ItemGroup>
+
 </Project>
