@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-	
+
 	<!-- Import Parent Directory.Build.Props if Submodule -->
 	<Import Project="$(MSBuildThisFileDirectory)..\..\Directory.Build.props"
       Condition="Exists('$(MSBuildThisFileDirectory)..\..\Directory.Build.props')" />
-	
+
 	<!-- Project Owner and Version Metadata -->
 	<PropertyGroup>
 		<Company>NanoDNA Studios</Company>
@@ -26,12 +26,12 @@
 		<Configurations>Debug;Release</Configurations>
 		<Platforms>AnyCPU;x64;x86;ARM64;ARM32</Platforms>
 	</PropertyGroup>
-	
+
 	<!-- Building / Publishing Metadata -->
 	<PropertyGroup>
 		<PackageOutputPath>$(SolutionDir)nupkg</PackageOutputPath>
 	</PropertyGroup>
-	
+
 	<!-- Miscellanious -->
 	<PropertyGroup>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -39,6 +39,6 @@
 		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
-	
+
 </Project>
 
