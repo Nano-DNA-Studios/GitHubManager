@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using NanoDNA.GitHubManager.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace NanoDNA.GitHubManager.Services
 {
@@ -43,9 +44,17 @@ namespace NanoDNA.GitHubManager.Services
         /// Creates a Basic Webhook Receiver Server Application for GitHub Events.
         /// </summary>
         /// <returns>New Application Instance</returns>
-        private WebApplication CreateWebhookApp ()
+        private WebApplication CreateWebhookApp(bool logs = false)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
+            builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+            builder.Logging.AddFilter("System", LogLevel.Warning);
+            builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+            
             WebApplication app = builder.Build();
 
             app.MapPost("/webhook", async (HttpRequest request) =>
@@ -57,7 +66,7 @@ namespace NanoDNA.GitHubManager.Services
                 if (!GitHubSignature.Verify(json, signature, _secret))
                     return Results.Unauthorized();
 
-                IGitHubEvent githubEvent = GitHubEventParser.Parse(json, eventName);
+                IGitHubEvent githubEvent = GitHubEventParser.Parse(json, eventName, logs);
 
                 if (githubEvent != null)
                     _dispatcher.Dispatch(githubEvent);
@@ -72,9 +81,10 @@ namespace NanoDNA.GitHubManager.Services
         /// Starts a Webhook Receiver for GitHub Events.
         /// </summary>
         /// <param name="port">Port the Webhook Server is Exposed on</param>
-        public void Start(int port = 8080)
+        /// <param name="logs">Flag for Logging the Incoming Events</param>
+        public void Start(int port = 8080, bool logs = false)
         {
-            WebApplication app = CreateWebhookApp();
+            WebApplication app = CreateWebhookApp(logs);
 
             app.Run($"http://0.0.0.0:{port}");
         }
@@ -83,10 +93,11 @@ namespace NanoDNA.GitHubManager.Services
         /// Starts a Webhook Receiver Asynchronously for GitHub Events 
         /// </summary>
         /// <param name="port">Port the Webhook Server is Exposed on</param>
+        /// <param name="logs">Flag for Logging the Incoming Events</param>
         /// <returns>Async Task hosting the Server</returns>
-        public async Task StartAsync(int port = 8080)
+        public async Task StartAsync(int port = 8080, bool logs = false)
         {
-            WebApplication app = CreateWebhookApp();
+            WebApplication app = CreateWebhookApp(logs);
 
             await app.RunAsync($"http://0.0.0.0:{port}");
         }

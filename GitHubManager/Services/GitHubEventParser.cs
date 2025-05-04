@@ -15,10 +15,12 @@ namespace NanoDNA.GitHubManager.Services
         /// </summary>
         /// <param name="json">JSON Payload from GitHub</param>
         /// <param name="eventName">Name of the GitHub Event</param>
+        /// <param name="logs">Flag for Logging Incoming Events</param>
         /// <returns>Event instance as a <see cref="IGitHubEvent"/></returns>
-        public static IGitHubEvent Parse(string json, string eventName)
-        {
-            Console.WriteLine(eventName);
+        public static IGitHubEvent Parse(string json, string eventName, bool logs = false)
+        { 
+            if (logs)
+                Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {eventName}");
 
             return eventName switch
             {
