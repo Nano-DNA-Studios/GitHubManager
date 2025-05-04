@@ -17,8 +17,8 @@ namespace NanoDNA.GitHubManager.Services
         /// <param name="eventName">Name of the GitHub Event</param>
         /// <returns>Event instance as a <see cref="IGitHubEvent"/></returns>
         public static IGitHubEvent Parse(string json, string eventName)
-        {
-            Console.WriteLine(eventName);
+        { 
+            Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {eventName}");
 
             return eventName switch
             {

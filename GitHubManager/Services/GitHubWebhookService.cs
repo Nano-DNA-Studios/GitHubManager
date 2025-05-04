@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using NanoDNA.GitHubManager.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace NanoDNA.GitHubManager.Services
 {
@@ -43,9 +44,17 @@ namespace NanoDNA.GitHubManager.Services
         /// Creates a Basic Webhook Receiver Server Application for GitHub Events.
         /// </summary>
         /// <returns>New Application Instance</returns>
-        private WebApplication CreateWebhookApp ()
+        private WebApplication CreateWebhookApp()
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
+            builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+            builder.Logging.AddFilter("System", LogLevel.Warning);
+            builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+            
             WebApplication app = builder.Build();
 
             app.MapPost("/webhook", async (HttpRequest request) =>
