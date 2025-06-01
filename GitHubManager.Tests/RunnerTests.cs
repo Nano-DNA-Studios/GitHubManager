@@ -83,7 +83,7 @@ namespace NanoDNA.GitHubManager.Tests
 
             runner.Start();
 
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
 
             runner.SyncInfo();
 
