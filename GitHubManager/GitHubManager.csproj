@@ -29,7 +29,7 @@
 
 	<!-- Publishing NuGet Package References -->
 	<ItemGroup Condition="'$(Configuration)' == 'Release'">
-		<PackageReference Include="NanoDNA.DockerManager" Version="0.2.0" />
+		<PackageReference Include="NanoDNA.DockerManager" Version="0.2.1" />
 	</ItemGroup>
 
 	<!-- NuGet Package References -->

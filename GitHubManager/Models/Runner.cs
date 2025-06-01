@@ -128,7 +128,7 @@ namespace NanoDNA.GitHubManager.Models
 
             Container.Start();
 
-            WaitForRegistered();
+            WaitUntilRegistered();
             SyncInfo();
 
             if (Ephemeral)
@@ -152,71 +152,57 @@ namespace NanoDNA.GitHubManager.Models
         }
 
         /// <summary>
-        /// Waits for the Runner to have a Busy Status before continuing or until timeout
+        /// Generic Function for Repeatedly checking a Condition until it is met or a Timeout Occurs
         /// </summary>
-        public void WaitForBusy()
+        /// <param name="condition">Function representing the Condition to repeatedly Check. Function will block thread until the condition is equivalent to <paramref name="expectedResult"/></param>
+        /// <param name="expectedResult">The expected result of the condition function before unblocking the thread</param>
+        /// <param name="maxWaitSec">Maximum number of Seconds to wait for before continuing as a Timeout error</param>
+        private void WaitUntil(Func<bool> condition, bool expectedResult, int maxWaitSec)
         {
+            int waitCount = maxWaitSec * 2;
             int count = 0;
-
-            while (!Busy && count < 50)
+            while (condition() != expectedResult && count < waitCount)
             {
-                Thread.Sleep(1000);
-                SyncInfo();
+                Thread.Sleep(500);
                 count++;
             }
         }
 
+        /// <summary>
+        /// Syncs Info from the GitHub API about the Runner and returns the Busy Result
+        /// </summary>
+        /// <returns>True if Busy, False otherwise</returns>
+        private bool BusySync ()
+        {
+            SyncInfo();
+            return Busy;
+        }
+
+        /// <summary>
+        /// Waits for the Runner to have a Busy Status before continuing or until timeout
+        /// </summary>
+        public void WaitUntilBusy(int maxWaitSec = 50) => WaitUntil(BusySync, true, maxWaitSec);
+        
         /// <summary>
         /// Waits for the Runner to have an Idle Status before continuing or until timeout
         /// </summary>
-        public void WaitForIdle()
-        {
-            int count = 0;
-
-            while (Busy && count < 50)
-            {
-                Thread.Sleep(1000);
-                SyncInfo();
-                count++;
-            }
-        }
-
+        public void WaitUntilIdle(int maxWaitSec = 50) => WaitUntil(BusySync, false, maxWaitSec);
+        
         /// <summary>
         /// Waits on the GitHub Action Runner to be Registered and Visible on the GitHub API
         /// </summary>
-        private void WaitForRegistered()
-        {
-            int count = 0;
-
-            while (!Registered() && count < 50)
-            {
-                Thread.Sleep(1000);
-                count++;
-            }
-        }
-
+        private void WaitUntilRegistered(int maxWaitSec = 50) => WaitUntil(Registered, true, maxWaitSec);
+        
         /// <summary>
         /// Waits on the Runner to be Unregistered and Removed on the GitHub API
         /// </summary>
-        private void WaitForUnregistered()
-        {
-            int count = 0;
-
-            while (Registered() && count < 50)
-            {
-                Thread.Sleep(1000);
-                count++;
-            }
-        }
+        private void WaitUntilUnregistered(int maxWaitSec = 50) => WaitUntil(Registered, false, maxWaitSec);
 
         /// <summary>
         /// Checks if the Runner Container is Running
         /// </summary>
         /// <returns>True if the Container is Running, False otherwise</returns>
-        public bool Running()
-        {
-            return Container.Running();
-        }
+        public bool Running() => Container.Running();
 
         /// <summary>
         /// Checks if the Runner is Registered on the GitHub API
@@ -272,7 +258,7 @@ namespace NanoDNA.GitHubManager.Models
             if (Registered())
             {
                 Unregister();
-                WaitForUnregistered();
+                WaitUntilUnregistered();
             }
 
             if (Container.Running())
