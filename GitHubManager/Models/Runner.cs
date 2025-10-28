@@ -82,7 +82,7 @@ namespace NanoDNA.GitHubManager.Models
         /// <summary>
         /// Number of times the Runner is Idle in a Row, used for Ephemeral Runners
         /// </summary>
-        private int idleCount = 0;
+        private int _idleCount = 0;
 
         /// <summary>
         /// Initializes a new Runner Instance with the specified Name, Owner, Repository and Labels
@@ -143,11 +143,11 @@ namespace NanoDNA.GitHubManager.Models
             SyncInfo();
 
             if (!Busy && Status == "online")
-                idleCount++;
+                _idleCount++;
             else
-                idleCount = 0;
+                _idleCount = 0;
 
-            if (idleCount > 3)
+            if (_idleCount > 3)
                 Stop();
         }
 
