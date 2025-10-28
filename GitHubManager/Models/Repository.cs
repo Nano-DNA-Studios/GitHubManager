@@ -73,10 +73,12 @@ namespace NanoDNA.GitHubManager.Models
         /// <returns>New Initialized instance of a Repository</returns>
         public static Repository GetRepository(string ownerName, string repositoryName)
         {
-            using (HttpResponseMessage response = Client.GetAsync($"https://api.github.com/repos/{ownerName}/{repositoryName}").Result)
+            string address = $"https://api.github.com/repos/{ownerName}/{repositoryName}";
+
+            using (HttpResponseMessage response = Client.GetAsync(address).Result)
             {
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception("Failed to get Repository");
+                    throw new Exception($"Failed to get Repository : {address}");
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
